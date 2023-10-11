@@ -1,16 +1,19 @@
+using System.Collections;
 using UnityEngine;
-using Agava.YandexGames;
+using YG;
 
 public class YandexInteraction : MonoBehaviour
 {
     public static YandexInteraction Instance { get; private set; }
 
-    private const int minimalSaveChars = 4;
-
-    public bool IsAuthorized => PlayerAccount.IsAuthorized;
+    public bool IsAuthorized => YandexGame.auth;
     public bool IsDataLoaded { get; private set; } = false;
 
     private const string MainLeaderboard = "CoinsLeaderboard";
+
+    private void OnEnable() => YandexGame.GetDataEvent += DataLoaded;
+
+    private void OnDisable() => YandexGame.GetDataEvent -= DataLoaded;
 
     private void Awake()
     {
@@ -21,12 +24,23 @@ public class YandexInteraction : MonoBehaviour
         }
 
         Instance = this;
-        YandexGamesSdk.Initialize(Initialized);
+
+        YandexGame.Instance.InitializationSDK();
+        StartCoroutine(Initialized());
     }
 
-    private void Initialized()
+    private void Start()
     {
-        StickyAd.Show();
+        GameData.Instance.Values.MaxLevel.SubscribeChanged(SaveData);
+        GameData.Instance.Values.Coins.SubscribeChanged(SaveLeaderboard);
+        GameData.Instance.Values.Coins.SubscribeChanged(SaveData);
+    }
+
+    private IEnumerator Initialized()
+    {
+        yield return new WaitUntil(() => YandexGame.SDKEnabled);
+
+        YandexGame.Instance._StickyAdActivity(true);
     }
 
     private void Authorized()
@@ -34,27 +48,26 @@ public class YandexInteraction : MonoBehaviour
         LoadData();
     }
 
-    private void DataLoaded(string result)
+    private void DataLoaded()
     {
-        if (result.Length > minimalSaveChars)
-            GameData.Instance.UpdateValues(JsonUtility.FromJson<GameValues>(result));
-
-        GameData.Instance.Values.MaxLevel.SubscribeChanged(SaveData);
-
-        GameData.Instance.Values.Coins.SubscribeChanged(SaveLeaderboard);
-        GameData.Instance.Values.Coins.SubscribeChanged(SaveData);
+        GameData.Instance.Values.MaxLevel.SetValue(YandexGame.savesData.level);
+        GameData.Instance.Values.Coins.SetValue(YandexGame.savesData.money);
 
         IsDataLoaded = true;
     }
 
     private void SaveLeaderboard()
     {
-        Leaderboard.SetScore(MainLeaderboard, GameData.Instance.Values.Coins.GetValue());
+        YandexGame.NewLeaderboardScores(MainLeaderboard, GameData.Instance.Values.Coins.GetValue());
     }
 
     public void Authorize()
     {
-        PlayerAccount.Authorize(Authorized);
+        if (YandexGame.SDKEnabled == false)
+            return;
+
+        YandexGame.Instance.ResolvedAuthorization.AddListener(Authorized);
+        YandexGame.AuthDialog();
     }
 
     public void SaveData()
@@ -62,16 +75,19 @@ public class YandexInteraction : MonoBehaviour
         if (IsAuthorized == false)
             return;
 
-        PlayerAccount.SetCloudSaveData(GameData.Instance.Values.Serialize());
+        YandexGame.savesData.money = GameData.Instance.Values.Coins.GetValue();
+        YandexGame.savesData.level = GameData.Instance.Values.MaxLevel.GetValue();
+
+        YandexGame.SaveProgress();
     }
 
     public void LoadData()
     {
-        PlayerAccount.GetCloudSaveData(DataLoaded);
+        YandexGame.LoadProgress();
     }
 
     public void ShowInterstitial()
     {
-        InterstitialAd.Show();
+        YandexGame.Instance.OpenFullAd();
     }
 }
