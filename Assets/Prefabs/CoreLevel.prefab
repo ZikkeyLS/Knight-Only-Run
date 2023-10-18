@@ -42,6 +42,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4188210831454867311}
     m_Modifications:
+    - target: {fileID: 1506508267283088294, guid: 09350495185a66d478dc21270686bf1b, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -58.30005
+      objectReference: {fileID: 0}
     - target: {fileID: 1506508267755725130, guid: 09350495185a66d478dc21270686bf1b, type: 3}
       propertyPath: m_Camera
       value: 
@@ -130,6 +134,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Canvas
       objectReference: {fileID: 0}
+    - target: {fileID: 3338089161727735578, guid: 09350495185a66d478dc21270686bf1b, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -58.06006
+      objectReference: {fileID: 0}
     - target: {fileID: 6305570189982129106, guid: 09350495185a66d478dc21270686bf1b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -152,6 +160,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1506508267755725131, guid: 09350495185a66d478dc21270686bf1b, type: 3}
   m_PrefabInstance: {fileID: 94732291197796971}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &4327979106963029398 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4413699800269946877, guid: 09350495185a66d478dc21270686bf1b, type: 3}
+  m_PrefabInstance: {fileID: 94732291197796971}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &5272956624711813313 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5223542904947411626, guid: 09350495185a66d478dc21270686bf1b, type: 3}
@@ -315,6 +334,10 @@ PrefabInstance:
       propertyPath: audioSource
       value: 
       objectReference: {fileID: 8806892370894558782}
+    - target: {fileID: 8125563719255511135, guid: 6cdb5ef6764ef30448310aba99d170e7, type: 3}
+      propertyPath: levelNameText
+      value: 
+      objectReference: {fileID: 4327979106963029398}
     - target: {fileID: 8125563719255511135, guid: 6cdb5ef6764ef30448310aba99d170e7, type: 3}
       propertyPath: playerGameObject
       value: 

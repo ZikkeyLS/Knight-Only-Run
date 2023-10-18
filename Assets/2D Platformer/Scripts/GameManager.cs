@@ -23,9 +23,9 @@ namespace Platformer
         public GameObject deathPlayerPrefab;
         public WinScreen winScreen;
         public TMPro.TMP_Text coinText;
+        public TMPro.TMP_Text levelNameText;
 
         private Checkpoint _checkpoint;
-        private int _checkpointCoins;
 
         private GameObject _deathPlayer;
 
@@ -53,6 +53,9 @@ namespace Platformer
             }
 
             player = GameObject.Find("Player").GetComponent<PlayerController>();
+
+            if (GameData.Instance != null)
+                levelNameText.text = $"Уровень {GameData.Instance.Levels[GameData.Instance.CurrentLevel].ID + 1}";
         }
 
         private void Update()
@@ -83,8 +86,7 @@ namespace Platformer
 
             Destroy(_deathPlayer);
             playerGameObject.SetActive(true);
-            playerGameObject.transform.position = new Vector3(_checkpoint.transform.position.x, _checkpoint.transform.position.y, playerGameObject.transform.position.z);
-            coinsCounter = _checkpointCoins;        
+            playerGameObject.transform.position = new Vector3(_checkpoint.transform.position.x, _checkpoint.transform.position.y, playerGameObject.transform.position.z);     
         }
 
         public void TrySetCheckpoint(Checkpoint checkpoint)
@@ -94,7 +96,6 @@ namespace Platformer
 
             PlaySound(checkpointSound, checkpointVolume);
             _checkpoint = checkpoint;
-            _checkpointCoins = coinsCounter;
         }
 
         public void PlaySound(AudioClip sound, float volume)
@@ -106,6 +107,9 @@ namespace Platformer
         {
             player.lockMovement = true;
             PlaySound(winSound, winVolume);
+
+            if (GameData.Instance == null)
+                return;
 
             if (GameData.Instance.Levels.Count != GameData.Instance.CurrentLevel - 1)
                 GameData.Instance.CurrentLevel += 1;
@@ -123,11 +127,13 @@ namespace Platformer
 
         public void GoToMenu()
         {
+            YandexInteraction.Instance.ShowInterstitial();
             SceneManager.LoadScene(MainMenuName);
         }
 
         public void GoNext()
         {
+            YandexInteraction.Instance.ShowInterstitial();
             SceneManager.LoadScene(GameData.Instance.Levels[GameData.Instance.CurrentLevel].Name);
         }
     }

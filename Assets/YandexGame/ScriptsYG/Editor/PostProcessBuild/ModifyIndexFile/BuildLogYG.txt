@@ -1,2 +1,0 @@
-Build path: D:/Projects/CSharp/Unity/Knight Only Run/Builds/Web
-Build number: 14

@@ -1,19 +1,15 @@
 using System.Collections;
 using UnityEngine;
-using YG;
+//using Agava.YandexGames;
 
 public class YandexInteraction : MonoBehaviour
 {
     public static YandexInteraction Instance { get; private set; }
 
-    public bool IsAuthorized => YandexGame.auth;
+  //  public bool IsAuthorized => PlayerAccount.IsAuthorized;
     public bool IsDataLoaded { get; private set; } = false;
 
     private const string MainLeaderboard = "CoinsLeaderboard";
-
-    private void OnEnable() => YandexGame.GetDataEvent += DataLoaded;
-
-    private void OnDisable() => YandexGame.GetDataEvent -= DataLoaded;
 
     private void Awake()
     {
@@ -25,69 +21,49 @@ public class YandexInteraction : MonoBehaviour
 
         Instance = this;
 
-        YandexGame.Instance.InitializationSDK();
-        StartCoroutine(Initialized());
+        //YandexGamesSdk.Initialize(() => Debug.Log("Initialized"));
+        //StartCoroutine(Initialized());
     }
 
     private void Start()
     {
         GameData.Instance.Values.MaxLevel.SubscribeChanged(SaveData);
-        GameData.Instance.Values.Coins.SubscribeChanged(SaveLeaderboard);
         GameData.Instance.Values.Coins.SubscribeChanged(SaveData);
     }
 
-    private IEnumerator Initialized()
-    {
-        yield return new WaitUntil(() => YandexGame.SDKEnabled);
-
-        YandexGame.Instance._StickyAdActivity(true);
-    }
+   // private IEnumerator Initialized()
+   // {
+   //     yield return new WaitUntil(() => YandexGamesSdk.IsInitialized);
+   //     YandexGamesSdk.GameReady();
+   //     StickyAd.Show();
+   // }
 
     private void Authorized()
     {
         LoadData();
     }
 
-    private void DataLoaded()
-    {
-        GameData.Instance.Values.MaxLevel.SetValue(YandexGame.savesData.level);
-        GameData.Instance.Values.Coins.SetValue(YandexGame.savesData.money);
-
-        IsDataLoaded = true;
-    }
-
-    private void SaveLeaderboard()
-    {
-        YandexGame.NewLeaderboardScores(MainLeaderboard, GameData.Instance.Values.Coins.GetValue());
-    }
-
     public void Authorize()
     {
-        if (YandexGame.SDKEnabled == false)
-            return;
+       // if (YandexGamesSdk.IsInitialized == false)
+       //     return;
 
-        YandexGame.Instance.ResolvedAuthorization.AddListener(Authorized);
-        YandexGame.AuthDialog();
+       // PlayerAccount.StartAuthorizationPolling(0, Authorized);
     }
 
     public void SaveData()
     {
-        if (IsAuthorized == false)
-            return;
-
-        YandexGame.savesData.money = GameData.Instance.Values.Coins.GetValue();
-        YandexGame.savesData.level = GameData.Instance.Values.MaxLevel.GetValue();
-
-        YandexGame.SaveProgress();
+       // PlayerAccount.SetCloudSaveData(GameData.Instance.Values.Serialize());
+       // Leaderboard.SetScore(MainLeaderboard, GameData.Instance.Values.Coins.GetValue());
     }
 
     public void LoadData()
     {
-        YandexGame.LoadProgress();
+        // PlayerAccount.GetCloudSaveData((result) => GameData.Instance.Values.Deserialize(JsonUtility.FromJson<GameValues>(result)));
     }
 
     public void ShowInterstitial()
     {
-        YandexGame.Instance.OpenFullAd();
+        // InterstitialAd.Show();
     }
 }

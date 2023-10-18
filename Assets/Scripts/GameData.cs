@@ -18,11 +18,11 @@ public class GameValue<T>
         _value = initial;
     }
 
-    public void SetValue(T value) 
+    public void SetValue(T value, bool callChanged = true) 
     {
         _value = value;
 
-        if (_onChanged != null && _onChanged.GetInvocationList().Length != 0)
+        if (_onChanged != null && _onChanged.GetInvocationList().Length != 0 && callChanged)
             _onChanged.Invoke();
     } 
 
@@ -39,6 +39,12 @@ public class GameValues
     public GameValue<int> Coins = new GameValue<int>(0);
 
     public string Serialize() => JsonUtility.ToJson(this);
+
+    public void Deserialize(GameValues values)
+    {
+        MaxLevel.SetValue(values.MaxLevel.GetValue());
+        Coins.SetValue(values.Coins.GetValue());
+    }
 }
 
 public class LoadedLevel

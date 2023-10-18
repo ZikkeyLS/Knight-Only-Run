@@ -21,7 +21,7 @@ public class WinScreen : MonoBehaviour
     public void Initialize()
     {
         _nextLevel.interactable = GameData.Instance.CurrentLevel != GameData.Instance.Levels.Count;
-        _levelName.text = $"Уровень {GameData.Instance.Levels[GameData.Instance.CurrentLevel].ID + 1} пройден!";
+        _levelName.text = $"Уровень {GameData.Instance.CurrentLevel} пройден!";
         _coins.text = $"+{GameManager.Instance.coinsCounter} монет{GetProperEnding(GameManager.Instance.coinsCounter)}";
     }
 }
