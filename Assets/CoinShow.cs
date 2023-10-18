@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 
 public class CoinShow : MonoBehaviour
@@ -15,10 +14,8 @@ public class CoinShow : MonoBehaviour
             return "";
     }
 
-    private IEnumerator Start()
+    private void Update()
     {
-        _text.text = $"{GameData.Instance.Values.Coins.GetValue()} монет{GetProperEnding(GameData.Instance.Values.Coins.GetValue())}";
-        yield return new WaitUntil(() => YandexInteraction.Instance.IsDataLoaded);
         _text.text = $"{GameData.Instance.Values.Coins.GetValue()} монет{GetProperEnding(GameData.Instance.Values.Coins.GetValue())}";
     }
 }

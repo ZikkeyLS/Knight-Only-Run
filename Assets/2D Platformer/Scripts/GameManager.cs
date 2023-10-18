@@ -121,6 +121,9 @@ namespace Platformer
 
             GameData.Instance.Values.Coins.SetValue(GameData.Instance.Values.Coins.GetValue() + coinsCounter);
 
+            if (GameData.Instance.CurrentLevel == GameData.Instance.Levels.Count)
+                YandexAPI.RateGame();
+
             winScreen.gameObject.SetActive(true);
             winScreen.Initialize();
         }

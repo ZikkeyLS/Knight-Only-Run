@@ -20,7 +20,7 @@ public class AuthorizationScreen : MonoBehaviour
 
     public IEnumerator WaitUntilLoaded()
     {
-        yield return new WaitUntil(() => YandexInteraction.Instance.IsDataLoaded);
+        yield return new WaitForSeconds(1f);
         GameData.Instance.SetLoaded(true);
         ChangeScreen();
     }
@@ -28,17 +28,9 @@ public class AuthorizationScreen : MonoBehaviour
     public void PlayOffline()
     {
         GameData.Instance.SetOnline(false);
-        GameData.Instance.SetLoaded(true);
         YandexInteraction.Instance.LoadData();
-      //  StartCoroutine(WaitUntilLoadedLocal());
+        StartCoroutine(WaitUntilLoaded());
     }
-
-  //  public IEnumerator WaitUntilLoadedLocal()
-  //  {
-      //  yield return new WaitUntil(() => YandexGamesSdk.IsInitialized);
-      //  GameData.Instance.SetLoaded(true);
-      //  ChangeScreen();
-//}
 
     private void ChangeScreen()
     {
