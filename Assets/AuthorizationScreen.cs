@@ -15,25 +15,27 @@ public class AuthorizationScreen : MonoBehaviour
     {
         GameData.Instance.SetOnline(true);
         YandexInteraction.Instance.Authorize();
-        StartCoroutine(WaitUntilLoaded());
-    }
 
-    public IEnumerator WaitUntilLoaded()
-    {
-        yield return new WaitForSeconds(1f);
-        GameData.Instance.SetLoaded(true);
-        ChangeScreen();
+        GameData.Instance.Values.SubscribeOnDeserialize(Loaded);
     }
 
     public void PlayOffline()
     {
         GameData.Instance.SetOnline(false);
         YandexInteraction.Instance.LoadData();
-        StartCoroutine(WaitUntilLoaded());
+        GameData.Instance.Values.SubscribeOnDeserialize(Loaded);
+    }
+
+    public void Loaded()
+    {
+        ChangeScreen();
+        GameData.Instance.Values.UnsubscribeOnDeserialize(Loaded);
     }
 
     private void ChangeScreen()
     {
+        Debug.Log("Changed screen");
+        GameData.Instance.SetLoaded(true);
         Transition.SetActive(true);
         gameObject.SetActive(false);
     }

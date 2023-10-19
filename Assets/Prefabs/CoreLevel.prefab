@@ -42,10 +42,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4188210831454867311}
     m_Modifications:
-    - target: {fileID: 1506508267283088294, guid: 09350495185a66d478dc21270686bf1b, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -58.30005
-      objectReference: {fileID: 0}
     - target: {fileID: 1506508267755725130, guid: 09350495185a66d478dc21270686bf1b, type: 3}
       propertyPath: m_Camera
       value: 
@@ -133,10 +129,6 @@ PrefabInstance:
     - target: {fileID: 1506508267755725143, guid: 09350495185a66d478dc21270686bf1b, type: 3}
       propertyPath: m_Name
       value: Canvas
-      objectReference: {fileID: 0}
-    - target: {fileID: 3338089161727735578, guid: 09350495185a66d478dc21270686bf1b, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -58.06006
       objectReference: {fileID: 0}
     - target: {fileID: 6305570189982129106, guid: 09350495185a66d478dc21270686bf1b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target

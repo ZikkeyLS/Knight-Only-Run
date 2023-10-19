@@ -5,9 +5,6 @@ using UnityEngine;
 public static class YandexAPI
 {
     [DllImport("__Internal")]
-    public static extern void Init();
-
-    [DllImport("__Internal")]
     public static extern void Auth();
 
     [DllImport("__Internal")]
@@ -39,10 +36,14 @@ public class YandexInteraction : MonoBehaviour
 {
     public static YandexInteraction Instance { get; private set; }
 
-    public bool IsInitialized = false;
     public bool IsAuthorized = false;
 
-    private const string MainLeaderboard = "CoinsLeaderboard";
+    private const string MainLeaderboard = "MainLeaderboard";
+
+    public void SetAuthorized()
+    {
+        IsAuthorized = true;
+    }
 
     public void SetPlayerInfo(string value)
     {
@@ -57,22 +58,14 @@ public class YandexInteraction : MonoBehaviour
             return;
         }
 
-        YandexAPI.Init();
         Instance = this;
-        StartCoroutine(Initialized());    
+        YandexAPI.GameReady();
+        YandexAPI.ShowStickyAd();
     }
 
     private void Start()
     {
-        GameData.Instance.Values.MaxLevel.SubscribeChanged(SaveData);
         GameData.Instance.Values.Coins.SubscribeChanged(SaveData);
-    }
-
-    private IEnumerator Initialized()
-    {
-        yield return new WaitForSeconds(1);
-        YandexAPI.GameReady();
-        YandexAPI.ShowStickyAd();
     }
 
     public void Authorize()
@@ -83,8 +76,7 @@ public class YandexInteraction : MonoBehaviour
 
     private IEnumerator Authorized()
     {
-        yield return new WaitForSeconds(1f);
-        IsAuthorized = true;
+        yield return new WaitUntil(() => IsAuthorized);
         LoadData();
     }
 

@@ -28,7 +28,16 @@
         .then(ysdk => {
             console.log('Yandex SDK initialized');
             window.ysdk = ysdk;
+            initLeaderboards();
           });
+
+      
+      var lb;
+
+      function initLeaderboards() {
+        ysdk.getLeaderboards()
+          .then(_lb => lb = _lb);
+      }
 
       var player;
 

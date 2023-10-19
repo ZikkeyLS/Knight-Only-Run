@@ -16,6 +16,7 @@ public class CoinShow : MonoBehaviour
 
     private void Update()
     {
-        _text.text = $"{GameData.Instance.Values.Coins.GetValue()} монет{GetProperEnding(GameData.Instance.Values.Coins.GetValue())}";
+        int coins = GameData.Instance.Values.Coins.GetValue();
+        _text.text = $"{coins} монет{GetProperEnding(coins)}";
     }
 }

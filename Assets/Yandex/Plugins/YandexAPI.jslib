@@ -1,8 +1,4 @@
 mergeInto(LibraryManager.library, {
-    ShowBannerAds: function() {
-        // myGameInstance.SendMessage('GameData', 'ShowBannerAds', args);
-    },
-
     RateGame: function() {
         ysdk.feedback.canReview()
             .then(({ value, reason }) => {
@@ -17,24 +13,27 @@ mergeInto(LibraryManager.library, {
             })
     },
 
-    Init: function() {
-        initPlayer();
-        // Send init state
-    },
-
     Auth: function() {
-        // Send auth state
-        if (player.getMode() === 'lite') {
-            // Not authorized.
-            ysdk.auth.openAuthDialog().then(() => {
-                    // Authorized successfully.
-                    initPlayer().catch(err => {
-                        // Error on player init.
-                    });
-                }).catch(() => {
-                    // Not authorized for a reason
-                });
-        }
+        initPlayer().then(_player => {
+                if (_player.getMode() === 'lite') {
+                    // The player is not logged in.
+                    ysdk.auth.openAuthDialog().then(() => {
+                            // The player is successfully logged in
+                            myGameInstance.SendMessage('GameData', 'SetAuthorized');
+
+                            initPlayer().catch(err => {
+                                // Error initializing the Player object.
+                            });
+                        }).catch(() => {
+                            // The player is not logged in.
+                        });
+                }
+                else {
+                    myGameInstance.SendMessage('GameData', 'SetAuthorized');
+                }
+            }).catch(err => {
+                // Error initializing the Player object.
+            });
     },
 
     SaveExtern: function(data) {
@@ -77,7 +76,7 @@ mergeInto(LibraryManager.library, {
 
     SetLeaderboardScore: function(name, score) {
         var nameString = UTF8ToString(name);
-
+        
         ysdk.getLeaderboards()
             .then(lb => {
                 lb.setLeaderboardScore(nameString, score);

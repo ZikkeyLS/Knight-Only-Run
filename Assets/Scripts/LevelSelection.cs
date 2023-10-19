@@ -7,6 +7,7 @@ public class LevelSelection : MonoBehaviour
 
     private void Start()
     {
+        Debug.Log("loading levels");
         for (int i = 0; i < _levels.Length; i++)
         {
             LevelUI levelUI = Instantiate(_levelInstance, transform);
