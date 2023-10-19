@@ -17,22 +17,22 @@ mergeInto(LibraryManager.library, {
             })
     },
 
-    Init: function {
+    Init: function() {
         initPlayer();
         // Send init state
-    }
+    },
 
     Auth: function() {
         // Send auth state
-        if (_player.getMode() === 'lite') {
-            // Игрок не авторизован.
+        if (player.getMode() === 'lite') {
+            // Not authorized.
             ysdk.auth.openAuthDialog().then(() => {
-                    // Игрок успешно авторизован
+                    // Authorized successfully.
                     initPlayer().catch(err => {
-                        // Ошибка при инициализации объекта Player.
+                        // Error on player init.
                     });
                 }).catch(() => {
-                    // Игрок не авторизован.
+                    // Not authorized for a reason
                 });
         }
     },
@@ -53,5 +53,34 @@ mergeInto(LibraryManager.library, {
     GameReady: function() {
         ysdk.features.LoadingAPI.ready();
     },
+    
+    ShowStickyAd: function() {
+        ysdk.adv.showBannerAdv()
+    },
 
+    HideStickyAd: function() {
+        ysdk.adv.hideBannerAdv()
+    },
+
+    ShowInterstitialAd: function() {
+        ysdk.adv.showFullscreenAdv({
+            callbacks: {
+                onClose: function(wasShown) {
+                // some action after close
+                },
+                onError: function(error) {
+                // some action on error
+                }
+            }
+        })
+    },
+
+    SetLeaderboardScore: function(name, score) {
+        var nameString = UTF8ToString(name);
+
+        ysdk.getLeaderboards()
+            .then(lb => {
+                lb.setLeaderboardScore(nameString, score);
+            });
+    },
 });

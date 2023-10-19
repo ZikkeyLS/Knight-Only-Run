@@ -6,6 +6,7 @@ public static class YandexAPI
 {
     [DllImport("__Internal")]
     public static extern void Init();
+
     [DllImport("__Internal")]
     public static extern void Auth();
 
@@ -20,12 +21,25 @@ public static class YandexAPI
 
     [DllImport("__Internal")]
     public static extern void GameReady();
+
+    [DllImport("__Internal")]
+    public static extern void ShowStickyAd();
+
+    [DllImport("__Internal")]
+    public static extern void HideStickyAd();
+
+    [DllImport("__Internal")]
+    public static extern void ShowInterstitialAd();
+
+    [DllImport("__Internal")]
+    public static extern void SetLeaderboardScore(string name, int score);
 }
 
 public class YandexInteraction : MonoBehaviour
 {
     public static YandexInteraction Instance { get; private set; }
 
+    public bool IsInitialized = false;
     public bool IsAuthorized = false;
 
     private const string MainLeaderboard = "CoinsLeaderboard";
@@ -43,6 +57,7 @@ public class YandexInteraction : MonoBehaviour
             return;
         }
 
+        YandexAPI.Init();
         Instance = this;
         StartCoroutine(Initialized());    
     }
@@ -56,8 +71,8 @@ public class YandexInteraction : MonoBehaviour
     private IEnumerator Initialized()
     {
         yield return new WaitForSeconds(1);
-        //YandexGamesSdk.GameReady();
-        //StickyAd.Show();
+        YandexAPI.GameReady();
+        YandexAPI.ShowStickyAd();
     }
 
     public void Authorize()
@@ -78,6 +93,7 @@ public class YandexInteraction : MonoBehaviour
         if (IsAuthorized)
         {
             YandexAPI.SaveExtern(GameData.Instance.Values.Serialize());
+            YandexAPI.SetLeaderboardScore(MainLeaderboard, GameData.Instance.Values.Coins.GetValue());
         }
         else
         {
@@ -100,6 +116,6 @@ public class YandexInteraction : MonoBehaviour
 
     public void ShowInterstitial()
     {
-        // InterstitialAd.Show();
+        YandexAPI.ShowInterstitialAd();
     }
 }
