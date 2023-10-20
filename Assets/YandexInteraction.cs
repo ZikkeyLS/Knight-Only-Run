@@ -59,7 +59,6 @@ public class YandexInteraction : MonoBehaviour
         }
 
         Instance = this;
-        YandexAPI.GameReady();
         YandexAPI.ShowStickyAd();
     }
 
