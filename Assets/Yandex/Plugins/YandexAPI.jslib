@@ -6,11 +6,26 @@ mergeInto(LibraryManager.library, {
                     ysdk.feedback.requestReview()
                         .then(({ feedbackSent }) => {
                             console.log(feedbackSent);
+                            myGameInstance.SendMessage('GameData', 'RateCompleted');
                         })
                 } else {
                     console.log(reason)
+                    myGameInstance.SendMessage('GameData', 'RateCompleted');
                 }
             })
+    },
+
+    CheckAuth: function() {
+        initPlayer().then(_player => {
+                if (_player.getMode() === 'lite') {
+                    
+                }
+                else {
+                    myGameInstance.SendMessage('GameData', 'SetAuthorized');
+                }
+            }).catch(err => {
+                // Error initializing the Player object.
+            });
     },
 
     Auth: function() {
@@ -65,10 +80,12 @@ mergeInto(LibraryManager.library, {
         ysdk.adv.showFullscreenAdv({
             callbacks: {
                 onClose: function(wasShown) {
-                // some action after close
+                    // some action after close
+                    myGameInstance.SendMessage('GameData', 'InterstitialWatched');
                 },
                 onError: function(error) {
-                // some action on error
+                    // some action on error
+                    myGameInstance.SendMessage('GameData', 'InterstitialWatched');
                 }
             }
         })

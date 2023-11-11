@@ -1,9 +1,13 @@
 using System.Collections;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using UnityEngine.Events;
 
 public static class YandexAPI
 {
+    [DllImport("__Internal")]
+    public static extern void CheckAuth();
+
     [DllImport("__Internal")]
     public static extern void Auth();
 
@@ -37,8 +41,27 @@ public class YandexInteraction : MonoBehaviour
     public static YandexInteraction Instance { get; private set; }
 
     public bool IsAuthorized = false;
+    public bool IsInitialized = false;
 
     private const string MainLeaderboard = "MainLeaderboard";
+
+    public UnityEvent OnInterstitial = new UnityEvent();
+    public UnityEvent OnRateGame = new UnityEvent();
+
+    public void Pause()
+    {
+        Time.timeScale = 0;
+    }
+
+    public void UnPause()
+    {
+        Time.timeScale = 1;
+    }
+
+    public void SetInitialized()
+    {
+        IsInitialized = true;
+    }
 
     public void SetAuthorized()
     {
@@ -50,6 +73,16 @@ public class YandexInteraction : MonoBehaviour
         GameData.Instance.Values.Deserialize(JsonUtility.FromJson<GameValues>(value));
     }
 
+    public void InterstitialWatched()
+    {
+        OnInterstitial.Invoke();
+    }
+
+    public void RateCompleted()
+    {
+        OnRateGame.Invoke();
+    }
+
     private void Awake()
     {
         if (Instance != null)
@@ -59,24 +92,32 @@ public class YandexInteraction : MonoBehaviour
         }
 
         Instance = this;
+        StartCoroutine(ShowSticky());
+    }
+
+    private IEnumerator ShowSticky()
+    {
+        yield return new WaitUntil(() => IsInitialized);
         YandexAPI.ShowStickyAd();
     }
 
     private void Start()
     {
         GameData.Instance.Values.Coins.SubscribeChanged(SaveData);
+
+        OnInterstitial.AddListener(UnPause);
+        OnRateGame.AddListener(UnPause);
+    }
+
+    private void OnDisable()
+    {
+        OnInterstitial.RemoveListener(UnPause);
+        OnRateGame.RemoveListener(UnPause);
     }
 
     public void Authorize()
     {
         YandexAPI.Auth();
-        StartCoroutine(Authorized());
-    }
-
-    private IEnumerator Authorized()
-    {
-        yield return new WaitUntil(() => IsAuthorized);
-        LoadData();
     }
 
     public void SaveData()

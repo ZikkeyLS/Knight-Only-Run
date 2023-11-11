@@ -9,21 +9,35 @@ public class AuthorizationScreen : MonoBehaviour
     {
         if (GameData.Instance.Loaded)
             ChangeScreen();
+        else
+            StartCoroutine(CheckAuth());
+    }
+
+    private IEnumerator CheckAuth()
+    {
+        yield return new WaitUntil(() => YandexInteraction.Instance.IsInitialized);
+        YandexAPI.CheckAuth();
+        StartCoroutine(WaitCheckAuth());
+    }
+
+    private IEnumerator WaitCheckAuth()
+    {
+        GameData.Instance.Values.SubscribeOnDeserialize(Loaded);
+        yield return new WaitUntil(() => YandexInteraction.Instance.IsAuthorized);
+        YandexInteraction.Instance.LoadData();
     }
 
     public void PlayOnline()
     {
         GameData.Instance.SetOnline(true);
         YandexInteraction.Instance.Authorize();
-
-        GameData.Instance.Values.SubscribeOnDeserialize(Loaded);
     }
 
     public void PlayOffline()
     {
         GameData.Instance.SetOnline(false);
-        YandexInteraction.Instance.LoadData();
         GameData.Instance.Values.SubscribeOnDeserialize(Loaded);
+        YandexInteraction.Instance.LoadData();
     }
 
     public void Loaded()

@@ -1,3 +1,4 @@
+using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -122,7 +123,10 @@ namespace Platformer
             GameData.Instance.Values.Coins.SetValue(GameData.Instance.Values.Coins.GetValue() + coinsCounter);
 
             if (GameData.Instance.CurrentLevel == GameData.Instance.Levels.Count)
+            {
+                YandexInteraction.Instance.Pause();
                 YandexAPI.RateGame();
+            }
 
             winScreen.gameObject.SetActive(true);
             winScreen.Initialize();
@@ -130,13 +134,37 @@ namespace Platformer
 
         public void GoToMenu()
         {
+            YandexInteraction.Instance.Pause();
             YandexInteraction.Instance.ShowInterstitial();
-            SceneManager.LoadScene(MainMenuName);
+            YandexInteraction.Instance.OnInterstitial.AddListener(LoadMenuGlobal);
         }
 
         public void GoNext()
         {
+            YandexInteraction.Instance.Pause();
             YandexInteraction.Instance.ShowInterstitial();
+            YandexInteraction.Instance.OnInterstitial.AddListener(LoadNextGlobal);
+        }
+
+        private void LoadMenuGlobal()
+        {
+            LoadMenu();
+            YandexInteraction.Instance.OnInterstitial.RemoveListener(LoadMenuGlobal);
+        }
+
+        private void LoadMenu()
+        {
+            SceneManager.LoadScene(MainMenuName);
+        }
+
+        private void LoadNextGlobal()
+        {
+            LoadNext();
+            YandexInteraction.Instance.OnInterstitial.RemoveListener(LoadNextGlobal);
+        }
+
+        private void LoadNext()
+        {
             SceneManager.LoadScene(GameData.Instance.Levels[GameData.Instance.CurrentLevel].Name);
         }
     }
